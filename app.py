@@ -63,7 +63,7 @@ st.title("📊 Sistem Simulasi Malaria (Model SIR)")
 st.markdown("Aplikasi interaktif pemodelan dinamika malaria berbasis iklim untuk Provinsi Papua Tengah & Wilayah Universal.")
 
 with st.expander("Pelajari Model Matematika SIR yang Digunakan"):
-    st.markdown("Sistem ini menggunakan gabungan model kompartemen **SIR** (untuk dinamika populasi manusia) dan **LM** (untuk siklus hidup akuatik vektor nyamuk Anopheles). Sistem ini bersifat *non-autonomous* karena nilai parameternya terus berubah mengikuti fluktuasi iklim.")
+    st.markdown("Sistem ini menggunakan gabungan model kompartemen **SIR** (untuk dinamika populasi manusia) dan **LM** (untuk siklus hidup akuatik vektor nyamuk Anopheles). Sistem ini bersifat *non-autonomous* karena nilai parameternya terus berubah mengikuti fluktuasi iklim harian.")
     
     col_eq1, col_eq2 = st.columns(2)
     with col_eq1:
@@ -82,11 +82,11 @@ with st.expander("Pelajari Model Matematika SIR yang Digunakan"):
     st.markdown("""
     * **$A, S_v, I_v$**: Berturut-turut adalah fase akuatik (jentik), nyamuk dewasa rentan, dan nyamuk terinfeksi.
     * **$S_h, I_h, R_h$**: Berturut-turut adalah manusia rentan, terinfeksi, dan sembuh.
-    * **$K_R(t)$**: Kapasitas daya tampung lingkungan untuk jentik, dievaluasi berdasarkan akumulasi curah hujan harian.
-    * **$\\beta_{vh}(t)$ & $\\beta_{hv}(t)$**: Laju penularan parasit dari nyamuk ke manusia dan manusia ke nyamuk. Dimodelkan menggunakan *Fungsi Brière* untuk menyesuaikan sensitivitas aktivitas vektor terhadap suhu.
+    * **$K_R(t)$**: Kapasitas daya tampung lingkungan untuk jentik, dievaluasi berdasarkan akumulasi curah hujan.
+    * **$\\beta_{vh}(t)$ & $\\beta_{hv}(t)$**: Laju penularan parasit dari nyamuk ke manusia dan manusia ke nyamuk. Dimodelkan menggunakan *Fungsi Brière* untuk menyesuaikan sensitivitas aktivitas vektor terhadap suhu harian.
     * **$\\mu_v(t)$**: Laju kematian nyamuk dewasa yang bervariasi bergantung pada suhu ekstrem lingkungan.
     * **$\\phi, \\sigma, \\mu_A$**: Tingkat bertelur nyamuk, laju transisi dari fase akuatik menjadi dewasa, dan laju kematian alami fase akuatik.
-    * **$\\Lambda_h, \\mu_h, \\delta, r, \\omega$**: Laju kelahiran manusia, kematian alami manusia, kematian spesifik akibat malaria, laju kesembuhan manusia, dan tingkat hilangnya kekebalan.
+    * **$\\Lambda_h, \\mu_h, \\delta, r, \\omega$**: Laju kelahiran manusia, kematian alami manusia, kematian spesifik akibat malaria, laju kesembuhan, dan tingkat hilangnya kekebalan.
     """)
 
 # ==========================================
@@ -167,7 +167,7 @@ try:
             df_bpjs_mingguan.rename(columns={'Tgl_Start': 'Tanggal_Minggu', 'Bobot': 'Insiden_Kasus'}, inplace=True)
             df_bpjs_mingguan.set_index('Tanggal_Minggu', inplace=True)
 
-        # --- B. PROSES DATA IKLIM NASA (DENGAN DETEKSI HEADER OTOMATIS) ---
+        # --- B. PROSES DATA IKLIM NASA ---
         if is_mandiri:
             lines = [line.decode('utf-8') for line in file_iklim_upload.readlines()]
             file_iklim_upload.seek(0)
@@ -267,14 +267,12 @@ try:
         # ==========================================
         st.markdown("---")
         st.markdown("### Ringkasan Hasil Simulasi")
-        col_kpi1, col_kpi2, col_kpi3, col_kpi4 = st.columns(4)
+        
+        # Penyesuaian ke 3 Kolom Saja
+        col_kpi1, col_kpi2, col_kpi3 = st.columns(3)
         col_kpi1.metric("Puncak Kasus Infeksi (Ih)", f"{int(max(Ih_out))} Jiwa")
         col_kpi2.metric("Rata-rata R0(t)", f"{R0_t.mean():.2f}")
         col_kpi3.metric("Maksimum R0(t)", f"{R0_t.max():.2f}")
-        if not is_mandiri:
-            col_kpi4.metric("Korelasi Terbaik (Lag)", f"{best_lag} Mgg" if isinstance(best_lag, int) else "N/A")
-        else:
-            col_kpi4.metric("Status Data", "Sistem Universal Aktif")
 
         if is_mandiri:
             tab1, tab2, tab3 = st.tabs(["Hasil Simulasi Infeksi", "Manusia & Nyamuk", "Fase Jentik & Potensi Wabah (R0)"])
