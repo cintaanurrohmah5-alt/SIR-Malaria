@@ -59,7 +59,7 @@ DATABASE_WILAYAH = {
     }
 }
 
-st.title("📊 Sistem Simulasi Malaria (Model SIR)")
+st.title("📊 KARISMA : Kalkulator Analisis Risiko Infeksi Simulasi Malaria")
 st.markdown("Aplikasi interaktif pemodelan dinamika malaria berbasis iklim untuk Provinsi Papua Tengah & Wilayah Universal.")
 
 with st.expander("Pelajari Model Matematika SIR yang Digunakan"):
